@@ -104,8 +104,8 @@ App.editAvailabilityDay = function(staffId, ds){
   <div class="card">
     <div class="toggle-row"><span>この日は入れる</span><label class="switch"><input type="checkbox" id="avCan" ${r?'checked':''} onchange="document.getElementById('avTimes').style.display=this.checked?'block':'none'"><span class="slider"></span></label></div>
     <div id="avTimes" style="display:${r?'block':'none'}">
-      <label class="field"><span class="lbl">開始</span><input type="time" step="900" id="avStart" value="${minutesToTime(def.startMinutes)}"></label>
-      <label class="field"><span class="lbl">終了</span><input type="time" step="900" id="avEnd" value="${minutesToTime(def.endMinutes)}"></label>
+      <label class="field"><span class="lbl">開始</span><input type="time" step="900" id="avStart" value="${timeInputValue(def.startMinutes)}"></label>
+      <label class="field"><span class="lbl">終了</span><input type="time" step="900" id="avEnd" value="${timeInputValue(def.endMinutes)}"></label>
       <div class="footnote" id="avNote"></div>
     </div>
     <div class="footnote">提出された時間は、そのままシフトに確定します(自動生成では変えません)。</div>
@@ -138,9 +138,9 @@ function usualAvailabilityHtml(staff){
     return `<div style="padding:6px 0;border-bottom:1px solid var(--border)">
       <div class="toggle-row" style="padding:2px 0"><span>${DAY_LABELS[w-1]}曜日</span><label class="switch"><input type="checkbox" ${v?'checked':''} onchange="App.toggleUsual(${w},this.checked)"><span class="slider"></span></label></div>
       ${v?`<div style="display:flex;gap:8px;align-items:center">
-        <input type="time" step="900" value="${minutesToTime(v.startMinutes)}" onchange="App.setUsualTime(${w},'startMinutes',this.value)">
+        <input type="time" step="900" value="${timeInputValue(v.startMinutes)}" onchange="App.setUsualTime(${w},'startMinutes',this.value)">
         <span>〜</span>
-        <input type="time" step="900" value="${minutesToTime(v.endMinutes)}" onchange="App.setUsualTime(${w},'endMinutes',this.value)">
+        <input type="time" step="900" value="${timeInputValue(v.endMinutes)}" onchange="App.setUsualTime(${w},'endMinutes',this.value)">
       </div>`:""}
     </div>`;
   }).join("");

@@ -136,6 +136,7 @@ function buildRoleMode(o){
     roles, isEmployee, targetWorkDays, nonPublicOffDays, days,
     weightWeekendAttendance: state.store.weightWeekendAttendance,
     weightClosingFairness: state.store.weightClosingFairness,
+    weightRoleFairness: state.store.weightRoleFairness,
     primaryType(role){ const i = roles.indexOf(role); return i<0 ? null : i; },
   };
 }

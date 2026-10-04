@@ -136,8 +136,8 @@ App.editDayOff = function(staffId, reqId){
       <button class="${r.kind==='時間帯限定'?'active':''}" data-val="時間帯限定" onclick="App.setSeg('edKindSeg',this,'edKindVal');App.toggleEdTimeFields()">時間帯限定</button>
     </div>
     <div id="edTimeFields" style="display:${r.kind==='時間帯限定'?'block':'none'};margin-top:10px">
-      <label class="field"><span class="lbl">開始</span><input type="time" id="edStart" value="${minutesToTime(r.startMinutes??600)}"></label>
-      <label class="field"><span class="lbl">終了</span><input type="time" id="edEnd" value="${minutesToTime(r.endMinutes??1080)}"></label>
+      <label class="field"><span class="lbl">開始</span><input type="time" id="edStart" value="${timeInputValue(r.startMinutes??600)}"></label>
+      <label class="field"><span class="lbl">終了</span><input type="time" id="edEnd" value="${timeInputValue(r.endMinutes??1080)}"></label>
     </div>
     <div class="lbl" style="font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 6px">強さ</div>
     <div class="seg" id="edStrengthSeg">

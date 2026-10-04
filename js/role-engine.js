@@ -27,6 +27,7 @@ function RolePlan(input){
   this.lockedType = Array.from({length:input.daysInMonth}, ()=>({}));  // 日→ロック済みの人→種別番号
   this.assignments = [];
   this.closingCount = Array(input.staff.length).fill(0);
+  this.roleCount = Array.from({length:input.staff.length}, ()=>({})); // 人→種別番号→開店・中番の回数
 }
 RolePlan.prototype.workedDays = function(id){ return this.works.reduce((s,set)=>s+(set.has(id)?1:0),0); };
 RolePlan.prototype.typeOf = function(day, id){
@@ -115,12 +116,38 @@ function decideWorkDays(plan, input, mode, rand, jitter){
       let best = null, bestKey = Infinity;
       days.filter(d=>canWorkRole(id,d,plan,input,mode)).forEach(d=>{
         const info = mode.days[d-1];
-        const key = (info.isWeekend ? -100 : 0) + (current(d) + info.partTimeHeadcount - info.targetHeadcount)*10
+        // 目標人員に届かない日を最優先(平日でも)。届いている日どうしなら土日祝を先に(休みを平日に寄せる)
+        const shortage = info.targetHeadcount - (current(d) + info.partTimeHeadcount);
+        const key = (shortage > 0 ? -200 * shortage : 0) + (info.isWeekend ? -100 : 0) - shortage*10
           + workCost(id, d, plan, input, mode, rand, jitter);
         if(key < bestKey){ bestKey = key; best = d; }
       });
       if(best!=null){ plan.works[best-1].add(id); progressed = true; }
     });
+  }
+  // ④ 入れ替え:目標人員に届かない日があれば、目標より多い日(平日を先に)から同じ社員の出勤を1日移す
+  //    (1人ずつ順に配ると、連勤上限のせいで届かない日が残ることがあるため)
+  const shortage = d => mode.days[d-1].targetHeadcount - (current(d) + mode.days[d-1].partTimeHeadcount);
+  const hasPreferredOff = (id, d) => input.dayOffs.some(o=>o.staffID===id && o.day===d && o.startMinutes==null);
+  for(let round=0; round<5; round++){
+    let moved = false;
+    sortBy(days.filter(d=>mode.days[d-1].isOpen && shortage(d) > 0), d=>-shortage(d)).forEach(d=>{
+      if(shortage(d) <= 0) return;
+      for(const id of employees){
+        if(plan.works[d-1].has(id) || hasPreferredOff(id, d)) continue;
+        const sources = sortBy(days.filter(e=>e!==d && plan.works[e-1].has(id) && plan.lockedType[e-1][id]==null
+          && shortage(e) <= -1 && current(e)-1 >= minimum(e)), e=>(mode.days[e-1].isWeekend ? 1 : 0));
+        const ok = sources.some(e=>{
+          plan.works[e-1].delete(id);
+          if(canWorkRole(id, d, plan, input, mode)){ // 出勤日数・連勤上限・休みの確認は canWorkRole が行う
+            plan.works[d-1].add(id); return true;
+          }
+          plan.works[e-1].add(id); return false;
+        });
+        if(ok){ moved = true; break; }
+      }
+    });
+    if(!moved) break;
   }
 }
 
@@ -163,6 +190,7 @@ function assignRoles(plan, input, mode, vacancies, rand, jitter){
       if(i >= roles.length) return;
       plan.assignments.push({day, shiftTypeID:roles[i], staffID:id});
       if(mode.roles[roles[i]]==="閉め") plan.closingCount[id]++;
+      else plan.roleCount[id][roles[i]] = (plan.roleCount[id][roles[i]]||0) + 1;
     });
 
     // ハード制約の確認と空きの記録
@@ -192,6 +220,8 @@ function arrangementCost(order, roles, day, plan, input, mode, rand, jitter){
     });
     if(pref==="多め") cost -= p.weightPreference; else if(pref==="少なめ") cost += p.weightPreference;
     if(mode.roles[typeID]==="閉め") cost += plan.closingCount[id] * mode.weightClosingFairness;
+    // 開店・中番も回数が多い人ほど入りにくくする(「少なめ」が0回まで偏らず、「他の人より少なめ」になる)
+    else cost += (plan.roleCount[id][typeID]||0) * mode.weightRoleFairness;
     let prevEnd = null;
     if(day===1) prevEnd = input.prevTail.lastDayEndMinutes[id];
     else { const pt = plan.typeOf(day-1, id); if(pt!=null) prevEnd = input.shiftTypes[pt].endMinutes; }
@@ -270,6 +300,8 @@ function evaluateRolePlan(plan, vacancies, input, mode){
     const mean = closing.reduce((a,b)=>a+b,0)/closing.length;
     penalty += Math.sqrt(closing.reduce((s,c)=>s+(c-mean)**2,0)/closing.length) * mode.weightClosingFairness * 5;
   }
+  // 開店・中番の回数の偏り(k回目の割り当てに k−1 回分の減点 = 組み立て時の考え方と同じ)
+  employees.forEach(id=>Object.values(plan.roleCount[id]).forEach(n=>{ penalty += mode.weightRoleFairness * n*(n-1)/2; }));
   employees.forEach(id=>{
     let run = input.prevTail.consecutiveDays[id] || 0;
     for(let day=1; day<=input.daysInMonth; day++){

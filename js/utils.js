@@ -10,6 +10,10 @@ function minutesToTime(m){
   const h = Math.floor(m/60), mm = m%60;
   return h + ":" + String(mm).padStart(2,"0");
 }
+// 時刻入力欄(type="time")用。入力欄は「09:30」のような2桁の形しか受け付けないので0を足す
+function timeInputValue(m){
+  return minutesToTime(m).padStart(5,"0");
+}
 function timeToMinutes(t){
   const [h,m] = t.split(":").map(Number);
   return h*60+m;

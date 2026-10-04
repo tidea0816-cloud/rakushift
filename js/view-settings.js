@@ -71,8 +71,8 @@ App.openTypeEdit = function(typeId){
   </div>
   <div class="card">
     <label class="field"><span class="lbl">名前(例:A早番)</span><input type="text" id="tyName" value="${esc(t.name)}"></label>
-    <label class="field"><span class="lbl">開始</span><input type="time" id="tyStart" value="${minutesToTime(t.startMinutes)}"></label>
-    <label class="field"><span class="lbl">終了</span><input type="time" id="tyEnd" value="${minutesToTime(t.endMinutes)}"></label>
+    <label class="field"><span class="lbl">開始</span><input type="time" id="tyStart" value="${timeInputValue(t.startMinutes)}"></label>
+    <label class="field"><span class="lbl">終了</span><input type="time" id="tyEnd" value="${timeInputValue(t.endMinutes)}"></label>
     <div class="footnote" id="tyWorkTime"></div>
   </div>
   <div class="section-title">役割(中番ルールで使う)</div>
@@ -113,8 +113,8 @@ function updateWorkTimeNote(){
 }
 function bindTypeLiveEdit(t){
   document.getElementById("tyName").addEventListener("input", e=>{ t.name=e.target.value; save(); });
-  document.getElementById("tyStart").addEventListener("change", e=>{ t.startMinutes=timeToMinutes(e.target.value); if(t.endMinutes<=t.startMinutes) t.endMinutes=Math.min(t.startMinutes+30,1439); document.getElementById("tyEnd").value=minutesToTime(t.endMinutes); save(); });
-  document.getElementById("tyEnd").addEventListener("change", e=>{ t.endMinutes=Math.max(timeToMinutes(e.target.value), t.startMinutes+30); document.getElementById("tyEnd").value=minutesToTime(t.endMinutes); save(); });
+  document.getElementById("tyStart").addEventListener("change", e=>{ t.startMinutes=timeToMinutes(e.target.value); if(t.endMinutes<=t.startMinutes) t.endMinutes=Math.min(t.startMinutes+30,1439); document.getElementById("tyEnd").value=timeInputValue(t.endMinutes); save(); });
+  document.getElementById("tyEnd").addEventListener("change", e=>{ t.endMinutes=Math.max(timeToMinutes(e.target.value), t.startMinutes+30); document.getElementById("tyEnd").value=timeInputValue(t.endMinutes); save(); });
   document.getElementById("tySkill")?.addEventListener("change", e=>{ t.requiredSkill=e.target.value; save(); });
 }
 App.setTypeRole = function(value){

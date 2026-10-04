@@ -4,7 +4,7 @@
  *       (更新がすぐ届く+オフラインでも動く)。
  * 部品のファイルを増やしたら、下の FILES にも追加し、VERSION を1つ上げる。
  */
-const VERSION = "rakushift-v1";
+const VERSION = "rakushift-v4";
 const FILES = [
   "./", "index.html", "manifest.webmanifest", "css/app.css",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png",

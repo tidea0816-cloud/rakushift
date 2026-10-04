@@ -144,9 +144,9 @@ function renderBusinessSettings(){
     ${days.map(d=>`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
       <div class="toggle-row" style="padding:0 0 6px"><span>${DAY_LABELS[d.weekday-1]}曜日を定休日にする</span><label class="switch"><input type="checkbox" ${d.isClosed?'checked':''} onchange="App.setBizClosed(${d.weekday}, this.checked)"><span class="slider"></span></label></div>
       ${!d.isClosed? `<div style="display:flex;gap:8px;align-items:center">
-        <input type="time" value="${minutesToTime(d.openMinutes)}" onchange="App.setBizTime(${d.weekday},'openMinutes',this.value)">
+        <input type="time" value="${timeInputValue(d.openMinutes)}" onchange="App.setBizTime(${d.weekday},'openMinutes',this.value)">
         <span>〜</span>
-        <input type="time" value="${minutesToTime(d.closeMinutes)}" onchange="App.setBizTime(${d.weekday},'closeMinutes',this.value)">
+        <input type="time" value="${timeInputValue(d.closeMinutes)}" onchange="App.setBizTime(${d.weekday},'closeMinutes',this.value)">
       </div>`:""}
     </div>`).join("")}
   </div>
@@ -214,8 +214,8 @@ App.openSpecialEdit = function(spId){
       <button class="${sp.kind==='臨時営業'?'active':''}" data-val="臨時営業" onclick="App.setSpKind(this,${isNew})">臨時営業</button>
     </div>
     <div id="spHoursFields" style="display:${sp.kind==='臨時営業'?'block':'none'};margin-top:10px">
-      <label class="field"><span class="lbl">開店</span><input type="time" value="${minutesToTime(sp.openMinutes||600)}" onchange="App.setSpecialField('openMinutes',App.timeVal(this),${isNew})"></label>
-      <label class="field"><span class="lbl">閉店</span><input type="time" value="${minutesToTime(sp.closeMinutes||1260)}" onchange="App.setSpecialField('closeMinutes',App.timeVal(this),${isNew})"></label>
+      <label class="field"><span class="lbl">開店</span><input type="time" value="${timeInputValue(sp.openMinutes||600)}" onchange="App.setSpecialField('openMinutes',App.timeVal(this),${isNew})"></label>
+      <label class="field"><span class="lbl">閉店</span><input type="time" value="${timeInputValue(sp.closeMinutes||1260)}" onchange="App.setSpecialField('closeMinutes',App.timeVal(this),${isNew})"></label>
     </div>
     <label class="field" style="margin-top:10px"><span class="lbl">メモ</span><input type="text" id="spNote" value="${esc(sp.note)}" placeholder="例:棚卸しのため" oninput="App.setSpecialField('note',this.value,${isNew})"></label>
   </div>

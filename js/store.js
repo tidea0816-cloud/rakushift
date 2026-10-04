@@ -35,7 +35,8 @@ function defaultState(){
       monthlyPublicHolidays: 8,       // 社員の月間公休日数
       fullHeadcountMinMinutes: 420,   // バイトを「1人」と数える最低勤務時間(分)。未満は0.5人
       weightWeekendAttendance: 3,     // 重み6:土日祝に社員が休むことへの減点
-      weightClosingFairness: 2,       // 重み7:閉め回数のばらつきへの減点
+      weightClosingFairness: 8,       // 重み7:閉め回数のばらつきへの減点(2026-10-04 2→8。希望度に負けて閉めが偏ったため)
+      weightRoleFairness: 2,          // 開店・中番の回数のばらつきへの減点(「少なめ」が0回まで偏らないように)
     },
     businessDays: [1,2,3,4,5,6,7].map(w => ({weekday:w, isClosed:false, openMinutes:600, closeMinutes:1260})),
     specialDates: [], // {id,date:'YYYY-MM-DD',kind:'臨時休業'|'臨時営業',openMinutes,closeMinutes,note}
@@ -63,6 +64,8 @@ function mergeWithDefaults(saved){
   const base = defaultState();
   const merged = Object.assign(base, saved);
   merged.store = Object.assign(defaultState().store, saved.store || {});
+  // 閉め均等の重みは画面で変えられないので、古い既定値(2)のまま保存されていたら新しい既定値にそろえる
+  if(merged.store.weightClosingFairness===2) merged.store.weightClosingFairness = defaultState().store.weightClosingFairness;
   return merged;
 }
 
