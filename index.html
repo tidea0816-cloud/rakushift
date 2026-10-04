@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>らくシフト</title>
+<meta name="description" content="店長1人で使う、シフト表の叩き台を自動で作るアプリ。データはこの端末の中だけに保存します。">
+<!-- PWA(ホーム画面に追加してアプリのように使う)の設定 -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#FBF6F3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="らくシフト">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="modalRoot"></div>
+
+<!-- 読み込む順番が大事(後のファイルが前のファイルの部品を使う) -->
+<script src="js/store.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/holidays.js"></script>
+<script src="js/role-input.js"></script>
+<script src="js/input-builder.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/role-engine.js"></script>
+<script src="js/validator.js"></script>
+<script src="js/generation.js"></script>
+<script src="js/app.js"></script>
+<script src="js/view-schedule.js"></script>
+<script src="js/view-cell.js"></script>
+<script src="js/view-result.js"></script>
+<script src="js/export-image.js"></script>
+<script src="js/view-dayoff.js"></script>
+<script src="js/view-availability.js"></script>
+<script src="js/view-staff.js"></script>
+<script src="js/view-settings.js"></script>
+<script src="js/view-settings-store.js"></script>
+<script src="js/ui-common.js"></script>
+<script src="js/touch.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
